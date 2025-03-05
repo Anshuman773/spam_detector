@@ -40,10 +40,11 @@ function checkSpam() {
     button.disabled = true;
     
     fetch("https://spam-detector-mz19.onrender.com/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: message })
-    })
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: smsText })
+})
+
     .then(response => {
         console.log("Raw Response:", response);
         return response.json();
