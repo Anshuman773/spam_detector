@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Spam Detection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-shield-alt icon-shield"></i>
+            <h1 class="title">SMS Spam Detector</h1>
+            <p class="subtitle animated-element delay-1">Check if your message is legitimate or spam</p>
+        </div>
+        
+        <div class="input-section animated-element delay-2">
+            <div class="textarea-container">
+                <textarea id="smsText" placeholder="Enter your message here to analyze..."></textarea>
+                <div class="char-count"><span id="currentLength">0</span> / 160</div>
+            </div>
+            
+            <div class="button-container">
+                <button class="check-button" onclick="checkSpam()">
+                    <i class="fas fa-search"></i>
+                    <span>Check SMS</span>
+                    <div class="loader" id="loader"></div>
+                </button>
+            </div>
+        </div>
+        
+        <div class="results-section animated-element delay-3" id="resultsSection">
+            <div class="result-label">Analysis Result</div>
+            <div id="predictionResult">Waiting for input...</div>
+        </div>
+        
+        <div class="footer animated-element delay-3">
+            Protect yourself from spam messages • Stay safe online
+            <br>
+            <a href="https://www.linkedin.com/in/anshuman-mahapatra1704/"target="_blank">contact us</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
