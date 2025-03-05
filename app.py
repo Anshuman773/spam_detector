@@ -3,7 +3,7 @@ from flask_cors import CORS
 import joblib
 import re
 import string
-import os
+import os  # Import os to get Render's assigned port
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend requests
@@ -37,6 +37,7 @@ def predict():
 
     return jsonify({"result": result})
 
+# ✅ Fix: Bind Flask to the correct port for Render
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    port = int(os.environ.get("PORT", 10000))  # Get the port from Render
+    app.run(host="0.0.0.0", port=port, debug=True)  # Bind to all interfaces
