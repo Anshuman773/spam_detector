@@ -39,10 +39,10 @@ function checkSpam() {
     loader.style.display = 'inline-block';
     button.disabled = true;
     
-    fetch("https://sms-spam-detection-web-deployed-3acoq2ft0-anshuman-7s-projects.vercel.app/predict", {
+    fetch("https://spam-detector-mz19.onrender.com/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: smsText })
+        body: JSON.stringify({ message: message })
     })
     .then(response => {
         console.log("Raw Response:", response);
