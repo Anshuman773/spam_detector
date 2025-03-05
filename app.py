@@ -37,7 +37,8 @@ def predict():
 
     return jsonify({"result": result})
 
-# ✅ Fix: Bind Flask to the correct port for Render
+# ✅ Fix: Print Port & Bind Flask to the Correct Port for Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))  # Get the port from Render
+    print(f"🔥 Running on port {port}")  # Print the port to debug
     app.run(host="0.0.0.0", port=port, debug=True)  # Bind to all interfaces
