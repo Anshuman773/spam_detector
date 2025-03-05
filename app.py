@@ -1,35 +1,34 @@
-from flask import Flask, request, jsonify
-
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-
 import joblib
 import re
 import string
+import os
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)  # Enable CORS for frontend requests
 
-# Load the trained model and vectorizer
+# Load model
 model = joblib.load("multinomial_nb_model.pkl")
 vectorizer = joblib.load("tfidata_vectorizer.pkl")
 
 # Preprocessing function
 def preprocess_text(text):
     text = text.lower()
-    text = re.sub(f"[{string.punctuation}]", "", text)  # Remove punctuation
+    text = re.sub(f"[{string.punctuation}]", "", text)
     return text
 
-# ✅ Add a route for "/" to show API status
+# ✅ Serve index.html directly from the root folder
 @app.route("/")
 def home():
-    return "✅ Spam Detector API is Running!", 200
+    return send_file("index.html")
 
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json()
     if not data or 'message' not in data:
         return jsonify({'error': 'No message provided'}), 400
-    
+
     message = data["message"]
     processed_msg = preprocess_text(message)
     vectorized_msg = vectorizer.transform([processed_msg])
