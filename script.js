@@ -1,87 +1,88 @@
-// Show animations on page load
-document.addEventListener('DOMContentLoaded', function() {
-    let elements = document.querySelectorAll('.animated-element');
-    elements.forEach(element => {
-        element.classList.add('fade-in');
+document.addEventListener("DOMContentLoaded", function () {
+    // Show animations on page load
+    let elements = document.querySelectorAll(".animated-element");
+    elements.forEach((element) => {
+        element.classList.add("fade-in");
     });
-});
 
-// Character counter
-const smsText = document.getElementById('smsText');
-const currentLength = document.getElementById('currentLength');
+    // Character counter
+    const smsText = document.getElementById("smsText");
+    const currentLength = document.getElementById("currentLength");
 
-smsText.addEventListener('input', function() {
-    currentLength.textContent = this.value.length;
-    if (this.value.length > 160) {
-        currentLength.style.color = '#ef233c';
-    } else {
-        currentLength.style.color = '#6c757d';
+    if (smsText && currentLength) {
+        smsText.addEventListener("input", function () {
+            currentLength.textContent = this.value.length;
+            currentLength.style.color = this.value.length > 160 ? "#ef233c" : "#6c757d";
+        });
     }
+
+    // Spam check function
+    document.querySelector(".check-button").addEventListener("click", checkSpam);
 });
 
-// Function to check spam
 function checkSpam() {
-    let smsText = document.getElementById("smsText").value;
-    if (!smsText.trim()) {
+    const smsTextElement = document.getElementById("smsText");
+    const smsText = smsTextElement ? smsTextElement.value.trim() : "";
+
+    if (!smsText) {
         alert("Please enter a message to check.");
         return;
     }
-    
-    console.log("Sending SMS:", smsText);
-    
-    // Show loading state
-    const button = document.querySelector('.check-button');
-    const buttonText = button.querySelector('span');
-    const loader = document.getElementById('loader');
-    const resultsSection = document.getElementById('resultsSection');
-    
-    buttonText.textContent = 'Analyzing...';
-    loader.style.display = 'inline-block';
-    button.disabled = true;
-    
-    fetch("https://spam-detector-mz19.onrender.com/predict", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: smsText })
-})
 
-    .then(response => {
-        console.log("Raw Response:", response);
-        return response.json();
+    console.log("Sending SMS:", smsText);
+
+    // UI elements
+    const button = document.querySelector(".check-button");
+    const buttonText = button ? button.querySelector("span") : null;
+    const loader = document.getElementById("loader");
+    const resultsSection = document.getElementById("resultsSection");
+    const resultElement = document.getElementById("predictionResult");
+
+    if (!button || !buttonText || !loader || !resultsSection || !resultElement) {
+        console.error("Some required elements are missing from the DOM.");
+        return;
+    }
+
+    // Show loading state
+    buttonText.textContent = "Analyzing...";
+    loader.style.display = "inline-block";
+    button.disabled = true;
+
+    fetch("https://spam-detector-mz19.onrender.com/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: smsText }),
     })
-    .then(data => {
-        // Reset button state
-        buttonText.textContent = 'Check SMS';
-        loader.style.display = 'none';
-        button.disabled = false;
-        
-        // Show results with animation
-        resultsSection.classList.add('show');
-        
-        const resultElement = document.getElementById("predictionResult");
-        resultElement.innerText = data.result;
-        
-        // Apply different styles based on result
-        if (data.result.toLowerCase()===('spam')) {
-            resultElement.className = 'spam';
-            resultElement.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + data.result;
-        } else {
-            resultElement.className = 'ham';
-            resultElement.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.result;
-        } 
-        
-        console.log("Server Response:", data);
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        // Reset button state
-        buttonText.textContent = 'Check SMS';
-        loader.style.display = 'none';
-        button.disabled = false;
-        
-        // Show error message
-        document.getElementById("predictionResult").innerText = "Error connecting to server";
-        document.getElementById("predictionResult").className = 'spam';
-        resultsSection.classList.add('show');
-    });
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Server Response:", data);
+
+            // Reset button state
+            buttonText.textContent = "Check SMS";
+            loader.style.display = "none";
+            button.disabled = false;
+
+            // Show results
+            resultsSection.classList.add("show");
+            resultElement.innerHTML = `<i class="fas ${
+                data.result.toLowerCase() === "spam" ? "fa-exclamation-triangle spam" : "fa-check-circle ham"
+            }"></i> ${data.result}`;
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+
+            // Reset button state
+            buttonText.textContent = "Check SMS";
+            loader.style.display = "none";
+            button.disabled = false;
+
+            // Show error message
+            resultElement.innerHTML = '<i class="fas fa-times-circle spam"></i> Error connecting to server';
+            resultsSection.classList.add("show");
+        });
 }
