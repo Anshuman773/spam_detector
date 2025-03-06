@@ -48,7 +48,7 @@ function checkSpam() {
     loader.style.display = "inline-block";
     button.disabled = true;
 
-    fetch("https://spamdetector-lovat.vercel.app/predict", {
+    fetch("https://spam-detector-mz19.onrender.com", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: smsText }),
